@@ -1,44 +1,79 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <input type="num" v-model="state.num1" @keyup="add">
+    <input type="num" v-model="state.num2" @keyup="add">
+    {{state.result}}
+    {{state.result2}}
+    <button type="button" @click="doEmit">Button</button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import {
+  defineComponent,
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onUpdated,
+  onUnmounted,
+  onRenderTracked,
+  onRenderTriggered
+} from 'vue'
+
+interface StateTest {
+  num1: number;
+  num2: number;
+  [propName: string]: number;
+}
 
 export default defineComponent({
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  setup (props, { emit }) {
+    onMounted(() => {
+      console.log('onMounted', props)
+    })
+    onUpdated(() => {
+      console.log('onUpdated')
+    })
+    onUnmounted(() => {
+      console.log('onUnmounted')
+    })
+    onRenderTracked((e) => {
+      console.log('onRenderTracked', e)
+    })
+    onRenderTriggered(() => {
+      console.log('onRenderTriggered')
+    })
+    const state: StateTest = reactive({
+      num1: 0,
+      num2: 0,
+      result: 0,
+      result2: computed(() => +state.num1 + +state.num2)
+    })
+
+    const num1 = ref(0)
+    const num2 = ref(0)
+    const result = ref(0)
+    function add () {
+      // result.value = +num1.value + +num2.value
+      state.result = +state.num1 + +state.num2
+    }
+    function doEmit () {
+      emit('msgChange', 'newMas')
+    }
+
+    return {
+      num1,
+      num2,
+      result,
+      add,
+      state,
+      doEmit
+    }
   }
 })
 </script>

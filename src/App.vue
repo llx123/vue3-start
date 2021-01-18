@@ -1,6 +1,6 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" @msgChange='msgChange'/>
 </template>
 
 <script lang="ts">
@@ -11,6 +11,15 @@ export default defineComponent({
   name: 'App',
   components: {
     HelloWorld
+  },
+  setup () {
+    function msgChange (v: string) {
+      console.log(v, 'msg from children')
+    }
+
+    return {
+      msgChange
+    }
   }
 })
 </script>
